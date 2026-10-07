@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report - TrustAI</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="report-container">
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <div class="logo-icon">🛡️</div>
+                <span>TrustAI</span>
+            </div>
+            <div class="navbar-menu">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="detect.html" class="nav-link">Detect</a>
+                <a href="history.html" class="nav-link">History</a>
+                <a href="profile.html" class="nav-link">Profile</a>
+                <button id="logoutBtn" class="btn btn-text">Logout</button>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <div id="loadingState" class="loading-state">
+                <div class="spinner"></div>
+                <p>Loading report...</p>
+            </div>
+
+            <div id="reportContent" class="report-content hidden">
+                <div class="report-header">
+                    <h1>Detection Report</h1>
+                    <p id="reportDate">-</p>
+                </div>
+
+                <div class="report-section">
+                    <h2>Report Summary</h2>
+                    <div class="report-summary">
+                        <div class="summary-item">
+                            <span class="label">Detection ID</span>
+                            <span id="detectionId" class="value">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">Generated Date</span>
+                            <span id="generatedDate" class="value">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">Status</span>
+                            <span id="reportStatus" class="value badge">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <h2>Analysis Summary</h2>
+                    <p class="report-text">Detailed analysis results are available. Download the full report for comprehensive details.</p>
+                </div>
+
+                <div class="action-buttons">
+                    <button id="downloadBtn" class="btn btn-primary">📥 Download Report</button>
+                    <a id="backBtn" href="#" class="btn btn-secondary">Back to Results</a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        if (!isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const detectionId = urlParams.get('id');
+
+        if (!detectionId) {
+            window.location.href = 'dashboard.html';
+        }
+
+        async function loadReport() {
+            try {
+                const response = await getReport(detectionId);
+
+                if (response.success && response.data) {
+                    const report = response.data;
+
+                    document.getElementById('detectionId').textContent = report.detection?.id || 'N/A';
+                    document.getElementById('generatedDate').textContent = formatDate(report.generatedAt);
+                    document.getElementById('reportDate').textContent = `Generated on ${formatDate(report.generatedAt)}`;
+                    document.getElementById('reportStatus').textContent = 'GENERATED';
+                    document.getElementById('backBtn').href = `result.html?id=${detectionId}`;
+
+                    document.getElementById('loadingState').classList.add('hidden');
+                    document.getElementById('reportContent').classList.remove('hidden');
+                } else {
+                    showToast('Failed to load report', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error loading report', 'error');
+            }
+        }
+
+        document.getElementById('downloadBtn').addEventListener('click', async () => {
+            try {
+                await downloadReport(detectionId);
+            } catch (error) {
+                showToast(error.message || 'Report download failed', 'error');
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', async function() {
+            try {
+                await logout();
+            } finally {
+                window.location.href = 'login.html';
+            }
+        });
+
+        loadReport();
+    </script>
+</body>
+</html>

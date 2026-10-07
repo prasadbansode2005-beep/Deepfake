@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detection Results - TrustAI</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="result-container">
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <div class="logo-icon">🛡️</div>
+                <span>TrustAI</span>
+            </div>
+            <div class="navbar-menu">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="detect.html" class="nav-link">Detect</a>
+                <a href="history.html" class="nav-link">History</a>
+                <a href="profile.html" class="nav-link">Profile</a>
+                <button id="logoutBtn" class="btn btn-text">Logout</button>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <div id="loadingState" class="loading-state">
+                <div class="spinner"></div>
+                <p>Loading analysis results...</p>
+            </div>
+
+            <div id="resultContent" class="result-content hidden">
+                <div class="result-header">
+                    <h1>Analysis Results</h1>
+                    <p id="fileInfo">-</p>
+                </div>
+
+                <section class="result-scores">
+                    <div class="score-card">
+                        <h3>Fake Probability</h3>
+                        <div class="circular-progress">
+                            <svg viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="45" class="progress-bg"></circle>
+                                <circle id="fakeScoreCircle" cx="50" cy="50" r="45" class="progress-fill"></circle>
+                            </svg>
+                            <span id="fakeProbability" class="progress-text">0%</span>
+                        </div>
+                    </div>
+
+                    <div class="score-card">
+                        <h3>Authenticity Score</h3>
+                        <div class="circular-progress">
+                            <svg viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="45" class="progress-bg"></circle>
+                                <circle id="authenticityScoreCircle" cx="50" cy="50" r="45" class="progress-fill"></circle>
+                            </svg>
+                            <span id="authenticityScore" class="progress-text">0%</span>
+                        </div>
+                    </div>
+
+                    <div class="score-card">
+                        <h3>Trust Score</h3>
+                        <div class="circular-progress">
+                            <svg viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="45" class="progress-bg"></circle>
+                                <circle id="trustScoreCircle" cx="50" cy="50" r="45" class="progress-fill"></circle>
+                            </svg>
+                            <span id="trustScore" class="progress-text">0%</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="analysis-breakdown">
+                    <h2>Detailed Analysis Breakdown</h2>
+                    <div class="analysis-items">
+                        <div class="analysis-item">
+                            <span class="label">Face Manipulation</span>
+                            <div class="bar">
+                                <div id="faceManipulationBar" class="bar-fill"></div>
+                            </div>
+                            <span id="faceManipulationValue" class="value">0%</span>
+                        </div>
+                        <div class="analysis-item">
+                            <span class="label">Lighting Consistency</span>
+                            <div class="bar">
+                                <div id="lightingConsistencyBar" class="bar-fill"></div>
+                            </div>
+                            <span id="lightingConsistencyValue" class="value">0%</span>
+                        </div>
+                        <div class="analysis-item">
+                            <span class="label">Texture Analysis</span>
+                            <div class="bar">
+                                <div id="textureAnalysisBar" class="bar-fill"></div>
+                            </div>
+                            <span id="textureAnalysisValue" class="value">0%</span>
+                        </div>
+                        <div class="analysis-item">
+                            <span class="label">Audio-Video Sync</span>
+                            <div class="bar">
+                                <div id="audioVideoSyncBar" class="bar-fill"></div>
+                            </div>
+                            <span id="audioVideoSyncValue" class="value">0%</span>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="action-buttons">
+                    <a id="trustBtn" href="#" class="btn btn-primary">View Trust Verification</a>
+                    <a id="reportBtn" href="#" class="btn btn-secondary">View Report</a>
+                    <a href="detect.html" class="btn btn-outline">New Detection</a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        if (!isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+
+        // Get detection ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const detectionId = urlParams.get('id');
+
+        if (!detectionId) {
+            window.location.href = 'dashboard.html';
+        }
+
+        // Load detection results
+        async function loadResults() {
+            try {
+                const response = await getDetection(detectionId);
+
+                if (response.success && response.data) {
+                    const detection = response.data;
+
+                    // Update UI
+                    document.getElementById('fileInfo').textContent = `File: ${detection.fileName}`;
+                    document.getElementById('fakeProbability').textContent = `${Math.round(detection.fakeProbability)}%`;
+                    document.getElementById('authenticityScore').textContent = `${Math.round(detection.authenticityScore)}%`;
+                    document.getElementById('trustScore').textContent = `${Math.round(detection.trustScore)}%`;
+
+                    // Update analysis breakdown
+                    if (detection.analysis) {
+                        updateBar('faceManipulation', detection.analysis.faceManipulation);
+                        updateBar('lightingConsistency', detection.analysis.lightingConsistency);
+                        updateBar('textureAnalysis', detection.analysis.textureAnalysis);
+                        updateBar('audioVideoSync', detection.analysis.audioVideoSync);
+                    }
+
+                    // Update buttons
+                    document.getElementById('trustBtn').href = `trust.html?id=${detectionId}`;
+                    document.getElementById('reportBtn').href = `report.html?id=${detectionId}`;
+
+                    // Show results
+                    document.getElementById('loadingState').classList.add('hidden');
+                    document.getElementById('resultContent').classList.remove('hidden');
+                } else {
+                    showToast('Failed to load results', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading results:', error);
+                showToast('Error loading results', 'error');
+            }
+        }
+
+        function updateBar(name, value) {
+            const bar = document.getElementById(name + 'Bar');
+            const valueSpan = document.getElementById(name + 'Value');
+            const percentage = Math.round(value);
+            bar.style.width = percentage + '%';
+            valueSpan.textContent = percentage + '%';
+        }
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', async function() {
+            try {
+                await logout();
+            } finally {
+                window.location.href = 'login.html';
+            }
+        });
+
+        loadResults();
+    </script>
+</body>
+</html>

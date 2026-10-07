@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trust Verification - TrustAI</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="trust-container">
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <div class="logo-icon">🛡️</div>
+                <span>TrustAI</span>
+            </div>
+            <div class="navbar-menu">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="detect.html" class="nav-link">Detect</a>
+                <a href="history.html" class="nav-link">History</a>
+                <a href="profile.html" class="nav-link">Profile</a>
+                <button id="logoutBtn" class="btn btn-text">Logout</button>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <div id="loadingState" class="loading-state">
+                <div class="spinner"></div>
+                <p>Loading trust verification...</p>
+            </div>
+
+            <div id="trustContent" class="trust-content hidden">
+                <div class="trust-header">
+                    <h1>Trust Verification</h1>
+                    <p>Detailed trust analysis and verdict</p>
+                </div>
+
+                <div class="trust-verdict">
+                    <h2>Verdict</h2>
+                    <div id="verdictCard" class="verdict-card">
+                        <div id="verdictIcon" class="verdict-icon">✓</div>
+                        <p id="verdictText" class="verdict-text">-</p>
+                        <p id="verdictScore" class="verdict-score">Score: 0/100</p>
+                    </div>
+                </div>
+
+                <section class="trust-factors">
+                    <h2>Trust Factors</h2>
+                    <div class="factors-grid">
+                        <div class="factor-card">
+                            <h3>Source Reliability</h3>
+                            <div class="factor-bar">
+                                <div id="sourceReliabilityBar" class="factor-fill"></div>
+                            </div>
+                            <p id="sourceReliabilityValue" class="factor-value">0%</p>
+                        </div>
+
+                        <div class="factor-card">
+                            <h3>Metadata Integrity</h3>
+                            <div class="factor-bar">
+                                <div id="metadataIntegrityBar" class="factor-fill"></div>
+                            </div>
+                            <p id="metadataIntegrityValue" class="factor-value">0%</p>
+                        </div>
+
+                        <div class="factor-card">
+                            <h3>AI Confidence</h3>
+                            <div class="factor-bar">
+                                <div id="aiConfidenceBar" class="factor-fill"></div>
+                            </div>
+                            <p id="aiConfidenceValue" class="factor-value">0%</p>
+                        </div>
+
+                        <div class="factor-card">
+                            <h3>Manipulation Risk</h3>
+                            <div class="factor-bar">
+                                <div id="manipulationRiskBar" class="factor-fill"></div>
+                            </div>
+                            <p id="manipulationRiskValue" class="factor-value">0%</p>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="action-buttons">
+                    <a id="backBtn" href="#" class="btn btn-secondary">Back to Results</a>
+                    <a href="detect.html" class="btn btn-outline">New Detection</a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        if (!isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const detectionId = urlParams.get('id');
+
+        if (!detectionId) {
+            window.location.href = 'dashboard.html';
+        }
+
+        async function loadTrustVerification() {
+            try {
+                const response = await getTrustVerification(detectionId);
+
+                if (response.success && response.data) {
+                    const trust = response.data;
+
+                    // Update verdict
+                    const verdictCard = document.getElementById('verdictCard');
+                    let icon = '✓';
+                    let className = 'verdict-genuine';
+
+                    if (trust.verdict === 'HIGHLY SUSPICIOUS') {
+                        icon = '⚠️';
+                        className = 'verdict-fake';
+                    } else if (trust.verdict === 'SOMEWHAT QUESTIONABLE') {
+                        icon = '❓';
+                        className = 'verdict-questionable';
+                    }
+
+                    verdictCard.className = `verdict-card ${className}`;
+                    document.getElementById('verdictIcon').textContent = icon;
+                    document.getElementById('verdictText').textContent = trust.verdict;
+                    document.getElementById('verdictScore').textContent = `Score: ${trust.trustScore}/100`;
+
+                    // Update factors
+                    updateFactor('sourceReliability', trust.sourceReliability);
+                    updateFactor('metadataIntegrity', trust.metadataIntegrity);
+                    updateFactor('aiConfidence', trust.aiConfidence);
+                    updateFactor('manipulationRisk', trust.manipulationRisk);
+
+                    // Update back button
+                    document.getElementById('backBtn').href = `result.html?id=${detectionId}`;
+
+                    document.getElementById('loadingState').classList.add('hidden');
+                    document.getElementById('trustContent').classList.remove('hidden');
+                } else {
+                    showToast('Failed to load trust verification', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error loading trust verification', 'error');
+            }
+        }
+
+        function updateFactor(name, value) {
+            const bar = document.getElementById(name + 'Bar');
+            const valueSpan = document.getElementById(name + 'Value');
+            const percentage = Math.round(value);
+            bar.style.width = percentage + '%';
+            valueSpan.textContent = percentage + '%';
+        }
+
+        document.getElementById('logoutBtn').addEventListener('click', async function() {
+            try {
+                await logout();
+            } finally {
+                window.location.href = 'login.html';
+            }
+        });
+
+        loadTrustVerification();
+    </script>
+</body>
+</html>

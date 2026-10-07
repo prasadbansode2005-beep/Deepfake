@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TrustAI | Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="brand">
+            <span class="brand-mark"></span>
+            <span>TrustAI</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Sidebar navigation">
+          <a href="dashboard.html" class="sidebar-link active">Dashboard</a>
+          <a href="detect.html" class="sidebar-link">Deepfake Detection</a>
+          <a href="history.html" class="sidebar-link">Detection History</a>
+          <a href="report.html" class="sidebar-link">Reports</a>
+          <a href="trust.html" class="sidebar-link">Trust Verification</a>
+          <a href="profile.html" class="sidebar-link">Profile</a>
+          <a href="settings.html" class="sidebar-link">Settings</a>
+          <a href="#" class="sidebar-link">Help &amp; Support</a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <a href="login.html" class="sidebar-link logout-link">Logout</a>
+        </div>
+      </aside>
+
+      <main class="main-panel">
+        <div class="top-panel">
+          <div class="top-panel-left">
+            <button type="button" class="icon-btn" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+          </div>
+
+          <div class="user-actions">
+            <button type="button" class="icon-btn" aria-label="Notifications"><i class="fa-solid fa-bell"></i></button>
+            <div class="avatar">N</div>
+            <strong>Nikita</strong>
+          </div>
+        </div>
+
+        <h1 id="welcomeUser" class="page-heading">Welcome back, Nikita! 👋</h1>
+        <p class="page-subtitle">Here's what's happening with your account today.</p>
+
+        <section class="stats-grid">
+          <article class="glass-card stat-card">
+            <div class="label"><span>Total Scans</span><span class="trend">+12%</span></div>
+            <div class="value">127</div>
+          </article>
+          <article class="glass-card stat-card">
+            <div class="label"><span>Genuine Detected</span><span class="trend">+8%</span></div>
+            <div class="value">89</div>
+          </article>
+          <article class="glass-card stat-card">
+            <div class="label"><span>Fake Detected</span><span class="trend">+4%</span></div>
+            <div class="value">38</div>
+          </article>
+          <article class="glass-card stat-card">
+            <div class="label"><span>Trust Score (Avg)</span><span class="trend">+3%</span></div>
+            <div class="value">78/100</div>
+          </article>
+        </section>
+
+        <section class="dashboard-grid">
+          <article class="glass-card chart-card">
+            <div class="card-header">
+              <h3>Detection Overview</h3>
+              <span class="filter-pill">Last 7 Days</span>
+            </div>
+
+            <div class="chart-zone">
+              <div class="chart-line">
+                <svg viewBox="0 0 600 220" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="lineGradient" x1="0%" x2="100%" y1="0%" y2="0%">
+                      <stop offset="0%" stop-color="#7b35ff" />
+                      <stop offset="50%" stop-color="#20a9ff" />
+                      <stop offset="100%" stop-color="#19d8ff" />
+                    </linearGradient>
+                  </defs>
+                  <path d="M0,150 C60,120,100,98,160,110 S250,85,300,120 S420,90,500,60 S560,75,600,35 L600,220 L0,220 Z" fill="rgba(32,169,255,0.08)"></path>
+                  <path d="M0,150 C60,120,100,98,160,110 S250,85,300,120 S420,90,500,60 S560,75,600,35" fill="none" stroke="url(#lineGradient)" stroke-width="4" stroke-linecap="round"></path>
+                </svg>
+              </div>
+              <div class="chart-x">
+                <span>Mon</span>
+                <span>Tue</span>
+                <span>Wed</span>
+                <span>Thu</span>
+                <span>Fri</span>
+                <span>Sat</span>
+                <span>Sun</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="glass-card list-card">
+            <div class="card-header">
+              <h3>Recent Detections</h3>
+              <a href="history.html" class="link-text">View All</a>
+            </div>
+
+            <div class="list-table">
+              <div class="list-row">
+                <div class="file-meta">
+                  <span class="file-badge"><i class="fa-solid fa-video"></i></span>
+                  <div>
+                    <div class="file-name">video_demo.mp4</div>
+                    <div class="muted">Video</div>
+                  </div>
+                </div>
+                <span class="badge fake">Fake</span>
+                <span class="muted">87%</span>
+              </div>
+
+              <div class="list-row">
+                <div class="file-meta">
+                  <span class="file-badge"><i class="fa-solid fa-image"></i></span>
+                  <div>
+                    <div class="file-name">image_001.jpg</div>
+                    <div class="muted">Image</div>
+                  </div>
+                </div>
+                <span class="badge genuine">Genuine</span>
+                <span class="muted">92%</span>
+              </div>
+
+              <div class="list-row">
+                <div class="file-meta">
+                  <span class="file-badge"><i class="fa-solid fa-video"></i></span>
+                  <div>
+                    <div class="file-name">video_news.mp4</div>
+                    <div class="muted">Video</div>
+                  </div>
+                </div>
+                <span class="badge fake">Fake</span>
+                <span class="muted">79%</span>
+              </div>
+
+              <div class="list-row">
+                <div class="file-meta">
+                  <span class="file-badge"><i class="fa-solid fa-image"></i></span>
+                  <div>
+                    <div class="file-name">photo_family.jpg</div>
+                    <div class="muted">Image</div>
+                  </div>
+                </div>
+                <span class="badge genuine">Genuine</span>
+                <span class="muted">95%</span>
+              </div>
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - TrustAI</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="profile-container">
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <div class="logo-icon">🛡️</div>
+                <span>TrustAI</span>
+            </div>
+            <div class="navbar-menu">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="detect.html" class="nav-link">Detect</a>
+                <a href="history.html" class="nav-link">History</a>
+                <a href="profile.html" class="nav-link active">Profile</a>
+                <button id="logoutBtn" class="btn btn-text">Logout</button>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <div id="loadingState" class="loading-state">
+                <div class="spinner"></div>
+                <p>Loading profile...</p>
+            </div>
+
+            <div id="profileContent" class="profile-content hidden">
+                <div class="profile-header">
+                    <h1>My Profile</h1>
+                </div>
+
+                <div class="profile-section">
+                    <h2>Personal Information</h2>
+                    <form id="profileForm" class="profile-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fullName">Full Name</label>
+                                <input type="text" id="fullName" name="fullName" placeholder="Your full name">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" placeholder="Your email">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <input type="text" id="username" name="username" placeholder="Your username">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone</label>
+                                <input type="tel" id="phone" name="phone" placeholder="Your phone number">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="memberSince">Member Since</label>
+                            <input type="text" id="memberSince" readonly disabled>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+
+                <div class="profile-section">
+                    <h2>Account Settings</h2>
+                    <div class="settings-list">
+                        <button id="changePasswordBtn" class="btn btn-secondary">Change Password</button>
+                        <a href="settings.html" class="btn btn-secondary">User Preferences</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        if (!isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+
+        async function loadProfile() {
+            try {
+                const response = await getUserProfile();
+
+                if (response.success && response.data) {
+                    const profile = response.data;
+
+                    document.getElementById('fullName').value = profile.fullName || '';
+                    document.getElementById('email').value = profile.email || '';
+                    document.getElementById('username').value = profile.username || '';
+                    document.getElementById('phone').value = profile.phone || '';
+                    document.getElementById('memberSince').value = formatDate(profile.memberSince) || 'N/A';
+
+                    document.getElementById('loadingState').classList.add('hidden');
+                    document.getElementById('profileContent').classList.remove('hidden');
+                } else {
+                    showToast('Failed to load profile', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error loading profile', 'error');
+            }
+        }
+
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            try {
+                const response = await updateUserProfile(
+                    document.getElementById('fullName').value,
+                    document.getElementById('phone').value,
+                    document.getElementById('username').value,
+                    document.getElementById('email').value
+                );
+
+                if (response.success) {
+                    showToast('Profile updated successfully', 'success');
+                    loadProfile();
+                } else {
+                    showToast(response.message || 'Update failed', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error updating profile', 'error');
+            }
+        });
+
+        document.getElementById('changePasswordBtn').addEventListener('click', () => {
+            showToast('Password change feature coming soon', 'info');
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', async function() {
+            try {
+                await logout();
+            } finally {
+                window.location.href = 'login.html';
+            }
+        });
+
+        loadProfile();
+    </script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TrustAI | Detection History</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="brand">
+            <span class="brand-mark"></span>
+            <span>TrustAI</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Sidebar navigation">
+          <a href="dashboard.html" class="sidebar-link">Dashboard</a>
+          <a href="detect.html" class="sidebar-link">Deepfake Detection</a>
+          <a href="history.html" class="sidebar-link active">Detection History</a>
+          <a href="report.html" class="sidebar-link">Reports</a>
+          <a href="trust.html" class="sidebar-link">Trust Verification</a>
+          <a href="profile.html" class="sidebar-link">Profile</a>
+          <a href="settings.html" class="sidebar-link">Settings</a>
+          <a href="#" class="sidebar-link">Help &amp; Support</a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <a href="login.html" class="sidebar-link logout-link">Logout</a>
+        </div>
+      </aside>
+
+      <main class="main-panel">
+        <div class="top-panel">
+          <div class="top-panel-left">
+            <button type="button" class="icon-btn" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+          </div>
+
+          <div class="user-actions">
+            <button type="button" class="icon-btn" aria-label="Notifications"><i class="fa-solid fa-bell"></i></button>
+            <div class="avatar">N</div>
+            <strong>Nikita</strong>
+          </div>
+        </div>
+
+        <h1 class="page-heading">Detection History</h1>
+
+        <section class="glass-card chart-card" style="margin-top: 24px; padding: 20px;">
+          <div class="history-toolbar">
+            <div class="search-box">
+              <input id="historySearch" class="form-control" type="text" placeholder="Search files..." />
+            </div>
+
+            <select id="historyFilter" class="form-control" style="max-width: 200px;">
+              <option value="all">All Types</option>
+              <option value="image">Image</option>
+              <option value="video">Video</option>
+              <option value="audio">Audio</option>
+            </select>
+          </div>
+
+          <div class="history-table-wrap">
+            <table class="history-table">
+              <thead>
+                <tr>
+                  <th>File Name</th>
+                  <th>Type</th>
+                  <th>Date</th>
+                  <th>Result</th>
+                  <th>Trust Score</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="historyTableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="pagination">
+            <button type="button">1</button>
+            <button type="button">2</button>
+            <button type="button">3</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
